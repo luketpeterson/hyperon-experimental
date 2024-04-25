@@ -46,7 +46,7 @@ execute_process(
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 include(${CMAKE_CURRENT_BINARY_DIR}/conan_paths.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
+conan_basic_setup(TARGETS NO_OUTPUT_DIRS)
 
 find_package(pybind11 REQUIRED)
 find_package(optional-lite REQUIRED)
@@ -60,14 +60,16 @@ set(OpenSSL_ROOT_DIR ${CONAN_OPENSSL_ROOT} ${CONAN_LIB_DIRS_OPENSSL})
 set(OPENSSL_CRYPTO_LIBRARY ${CONAN_LIBS_OPENSSL_CRYPTO})
 set(OPENSSL_SSL_LIBRARY ${CONAN_LIBS_OPENSSL_SSL})
 find_package(OpenSSL REQUIRED)
+find_package(ZLIB REQUIRED)
 
 set(FULL_OPENSSL_SSL_LIBRARY "${CONAN_LIB_DIRS_OPENSSL}/libssl.a")
 set(FULL_OPENSSL_CRYPTO_LIBRARY "${CONAN_LIB_DIRS_OPENSSL}/libcrypto.a")
 
 link_directories(${CONAN_LIB_DIRS_OPENSSL})
 pybind11_add_module(hyperonpy MODULE ./hyperonpy.cpp)
-set_target_properties(hyperonpy PROPERTIES LINK_FLAGS "-Wl,-force_load,${FULL_OPENSSL_SSL_LIBRARY} -Wl,-force_load,${FULL_OPENSSL_CRYPTO_LIBRARY}")
-target_link_libraries(hyperonpy PRIVATE "${hyperonc_STATIC_LIBRARY}" ssl crypto)
+set_target_properties(hyperonpy PROPERTIES LINK_FLAGS "${FULL_OPENSSL_SSL_LIBRARY} ${FULL_OPENSSL_CRYPTO_LIBRARY}")
+target_link_libraries(hyperonpy PRIVATE "${hyperonc_STATIC_LIBRARY}" ssl crypto ZLIB::ZLIB)
 
 set(PYTHONPATH "${CMAKE_CURRENT_SOURCE_DIR}")
+
 add_subdirectory(tests)

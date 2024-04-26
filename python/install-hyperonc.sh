@@ -22,7 +22,7 @@ echo "hyperonc revision $HYPERONC_REV"
 
 # This is to build subunit from Conan on CentOS based manylinux images.
 if test "$AUDITWHEEL_POLICY" = "manylinux2014"; then
-    yum install -y perl-devel
+    yum install -y perl-core perl-devel openssl-devel openssl
 fi
 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rustup.sh
@@ -44,7 +44,9 @@ git reset --hard FETCH_HEAD
 mkdir -p ${HOME}/hyperonc/c/build
 cd ${HOME}/hyperonc/c/build
 # Rust doesn't support building shared libraries under musllinux environment
-cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release ..
+# Update: musllinux is currently disabled, regardless.  But We're currently
+# testing hyperonc by linking test apps to shared lib, so need to build it
+cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
 make
 make check
 make install

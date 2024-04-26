@@ -46,6 +46,7 @@ execute_process(
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 include(${CMAKE_CURRENT_BINARY_DIR}/conan_paths.cmake)
 
+find_package(ZLIB REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(optional-lite REQUIRED)
 include_directories(${nonstd_INCLUDE_DIRS})
@@ -54,6 +55,7 @@ include_directories(${hyperonc_INCLUDE_DIRS})
 
 pybind11_add_module(hyperonpy MODULE ./hyperonpy.cpp)
 target_link_libraries(hyperonpy PRIVATE "${hyperonc_STATIC_LIBRARY}")
+target_link_libraries(hyperonpy PUBLIC ZLIB::ZLIB)
 
 set(PYTHONPATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_subdirectory(tests)

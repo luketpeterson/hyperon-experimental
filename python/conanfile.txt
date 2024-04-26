@@ -1,7 +1,7 @@
 [requires]
 pybind11/2.10.1
 optional-lite/3.5.0
-openssl/3.2.1
+openssl/1.1.1w
 
 [generators]
 cmake
